@@ -1,5 +1,4 @@
 ---
-Checks:          '*,-modernize-use-trailing-return-type'
-WarningsAsErrors: '*'
+Checks:          '-modernize-use-trailing-return-type, clang-analyzer-*, performance-*, portability-*, readability-*, cppcoreguidelines-*'
 HeaderFilterRegex: ''
 FormatStyle:     none
