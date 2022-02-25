@@ -17,4 +17,4 @@ vscode:
   extensions:
     - llvm-vs-code-extensions.vscode-clangd
     - ms-vscode.cmake-tools
-    - webfreak.debug
+    - vadimcn.vscode-lldb

@@ -6,9 +6,9 @@
     "configurations": [
         {
             "name": "Debug",
-            "type": "lldb-mi",
+            "type": "lldb",
             "request": "launch",
-            "target": "./bin/executable",
+            "program": "./build/${workspaceFolderBasename}",
             "cwd": "${workspaceRoot}",
             "valuesFormatting": "parseText"
         }
