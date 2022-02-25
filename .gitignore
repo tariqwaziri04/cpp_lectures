@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+
+# cmakes build folder
+*/build/*
+build/*

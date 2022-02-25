@@ -1,10 +1,12 @@
+---
 # List the start up tasks. Learn more https://www.gitpod.io/docs/config-start-tasks/
 # image:
 #   file: .gitpod.Dockerfile
 image: gitpod/workspace-full
 tasks:
-  - init: 'echo Hello Init' # runs during prebuild
-    command: 'echo Hello Command'
+  - init: >
+      cmake -S. -Bbuild -DCMAKE_EXPORT_COMPILE_COMMANDS=ON &&
+      cmake --build build --target all 
 
 # List the ports to expose. Learn more https://www.gitpod.io/docs/config-ports/
 ports:
@@ -14,3 +16,5 @@ ports:
 vscode:
   extensions:
     - llvm-vs-code-extensions.vscode-clangd
+    - ms-vscode.cmake-tools
+    - webfreak.debug
