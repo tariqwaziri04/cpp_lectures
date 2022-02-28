@@ -1,20 +1,12 @@
 #include <cstdio>
+#include <array>
 
 int main()
 {
-    std::printf("Enter a list of numbers (0 to end): ");
-    int sum = 0;
-    int num = 0;
-
-    while (true)
+    std::array<int, 5> arr = {1, 2, 3, 4, 5};
+    for (int i = 0; i < arr.size(); i += 1)
     {
-        std::scanf("%d", &num);
-        if (num == 0)
-        {
-            break;
-        }
-        sum += num;
+        arr[i] *= 2;
+        std::printf("arr[%d] = %d\n", i, arr[i]);
     }
-    std::printf("sum = %d\n", sum);
-
 }
