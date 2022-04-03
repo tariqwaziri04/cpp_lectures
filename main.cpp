@@ -10,6 +10,7 @@ constexpr auto MAX_MODEL_NAME = 70;        // longest model name
 
 //List of items categories stored in the shop.
 enum class items{
+    Invalid = -1,
     vegetables,
     shampoos, 
     cereals, 
@@ -43,7 +44,7 @@ enum class items{
     Count
 };
 
-/// @brief Holds the names of the product categories.
+// Holds the names of the product categories.
 constexpr string_view PRODUCT_NAMES[static_cast<int>(items::Count)] = {
     [static_cast<int>(items::vegetables)]    = "vegetables",
     [static_cast<int>(items::shampoos)]      = "shampoos",
@@ -77,38 +78,48 @@ constexpr string_view PRODUCT_NAMES[static_cast<int>(items::Count)] = {
     [static_cast<int>(items::electronics)] = "electronics",
 };
 
-/// @brief Prints a list of all the product categories available.
+// Checks if the given product is valid.
+constexpr auto is_valid_product(items prod) { return prod > items::Invalid && prod < items::Count; }
+
+// Return the name of the given product.
+constexpr auto get_product_name(items prod)
+{
+        if (!is_valid_product(prod)) { return string_view {""}; }
+
+        return PRODUCT_NAMES[static_cast<int>(prod)];
+}
+
+// Prints a list of all the product categories available.
 auto list_products()
 {
-        std::cout << "Items list: \n";
-        std::for_each_n(std::begin(PRODUCT_NAMES), std::size(PRODUCT_NAMES), [i = 0](const auto& name) mutable {
-                std::printf("(%d) %s\n", i, name.data());
+        cout << "Items list: \n";
+        for_each_n(begin(PRODUCT_NAMES), size(PRODUCT_NAMES), [i = 0](const auto& name) mutable {
+                cout << "%s\n", i , name.data();
                 i++;
         });
-        cout << "==========================" << endl;
+        cout << "==============================" << endl;
 }
 
 /// Represents a stocked item corresponding to one of the listed products categories.
-struct items
+struct item
 {
-    products     id;            // Products category that item falls into
-    std::string name;          // Name of the item
+    items     id;            // items category that item falls into
+    string name;          // Name of the item
     float       price;         // Price in GBP
     int         nstock;        // No. of units in stock
 
-        Item() = default;
+        item() = default;
 
-        Item(const items prod, const std::string& name, const float price, const int nstock) :
+        item(const items prod, const std::string& name, const float price, const int nstock) :
                 id {prod}, name {name}, price {price}, nstock {nstock}
-        {}
+            {}
 
         auto print() const { std::printf("%32s%64s%16.2f%8d\n", get_product_name(id).data(), name.c_str(), price, nstock); }
 };
-
 // Holds the inventory of all the stocked items in the store.
 struct Inventory
 {
-        using SearchPredicate = function<bool(const Item&)>;
+        using SearchPredicate = function<bool(const item&)>;
         using Items           = vector<item>;
         using ItemPtr         = Items::iterator;        // pointer to item type
 
@@ -128,8 +139,8 @@ struct Inventory
         {
                 auto pitem = std::find_if(items.begin(), items.end(), pred);
                 if (pitem != items.end()) { return pitem; }
-
                 return {};
+        
         }
 
         // Prints a table listing currently stocked items in the inventory.
@@ -147,7 +158,7 @@ struct InventoryUI{
         Invalid      = -1,
         Add_Items      = 'a',
         Remove_Items   = 'r',
-        Edit_Item     = 'e',
+        Edit_Items     = 'e',
         Search_Items   = 's',
         List_Products = 'p',
         List_Items    = 'l',
@@ -156,7 +167,7 @@ struct InventoryUI{
 
     Inventory inventory;
 
-    auto user_input_handler() {}
+    auto user_input_handlers() {}
 
     auto list_options()
     {
@@ -167,95 +178,91 @@ struct InventoryUI{
         printf("(%c) Quit\n", static_cast<char>(Options::Quit));
     }
         // get the user from the inventory management systems
-    auto get_user_action()
+    auto get_user_actions()
     {
-        char operation {};
+        char oprt {};
         cout << "Select operation: ";
-        cin >> operation;
+        cin >> oprt;
         cout << "============================" << endl;
-        return operation;
+        return oprt;
     }
 
         /// Adds item to the inventory.
-    auto handle_add_option()
+    auto handle_add_options()
     {
-        items item;
-             do {
-                    list_products();
-                    cout << "Select product category to add: ";
-                    int pid {};
-                    cin >> item.id;
-                    if (!is_valid_product(item.id)) { std::printf("Invalid option selected. Please try again.\n"); }
-                    else
-                    {
-                        // NOTE(CA, 28.03.2022) - Important to note that we need to consume the whitespaces from user input when using getline
-                        cout << "Enter model name: ";
-                        getline(cin >> ws, item.name);
-                        cout << "Enter price: ";
-                        cin >> item.price;
-                        cout >> "Enter quantity: ";
-                        cin >> item.nstock;
-
-                        return item;
-                    }
-
-                } while (true);
-    }
-
-        // Search item by name or product category to perform remove or edit operations on the found item.
-        auto handle_search_options()
-        {
-                char opt {};
-                std::printf("Search by (n) Name, (p) Product Category: ");
-                std::cin >> opt;
-
-                Inventory::ItemPtr pitem;
-
-                if (opt == 'n')
-                {
-                        // search for item by name
-                        string name {};
-                        cout << "Enter Model Name: ";
-                        getline(cin >> ws, name);
-                        pitem = inventory.search([&](const item& item) { return item.name == name; });
-                }
-                else if (opt == 'p')
-                {
-                        // search for item by product id
-                        Products prods {Product::Invalid};
-                        list_products();
-                        std::printf("Select product id: ");
-                        std::scanf("%d", &prods);
-                        std::printf("Selected product category: %s\n", get_product_name(prod).data());
-
-                        pitem = inventory.search([&](const items& item) { return item.id == prods; });
-                }
+        items Items;
+        do {
+                list_products();
+                cout << "Select product category to add: ";
+                int pid {};
+                cin >> &Items.id;
+                if (!is_valid_product(Itemss.id)) { cout << "Invalid option selected. Please try again.\n"; }
                 else
                 {
-                        std::printf("Invalid option selected. Please try again.\n");
+                // NOTE(CA, 28.03.2022) - Important to note that we need to consume the whitespaces from user input when using getline
+                cout << "Enter model name: ";
+                getline(cin >> ws, Items.name);
+                cout << "Enter price: ";
+                cin >> Items.price;
+                cout << "Enter quantity: ";
+                cin >> Items.nstock;
+                return Items;
+                }
+
+            } while (true);
+    }
+
+    // Search item by name or product category to perform remove or edit operations on the found item.
+    auto handle_search_options()
+    {
+        char opt {};
+        cout << "Search by (n) Name, (p) Product Category: ";
+        std::cin >> opt;
+
+        Inventory::ItemPtr pitem;
+
+            if (opt == 'n')
+            {
+                // search for item by name
+                string name {};
+                cout << "Enter Model Name: ";
+                getline(cin >> ws, name);
+                pitem = inventory.search([&](const item& item) { return item.name == name; });
+            }
+            else if (opt == 'p')
+                {
+                    items prods {items::Invalid};
+                    list_products();
+                    cout >> "Select item id: ";
+                    cin << &prods;
+                    cout >> "Selected items category: " prods, get_product_name(prod).data();   
+                    pitem = inventory.search([&](const items& item) { return items.id == prods;});
+                }
+            else
+                {
                         cout << "The option selected is invalid. " << endl << "Please try again";
                         return;
                 }
 
                 // if item was found
-                if (pitem != Inventory::ItemPtr {})
+            if (pitem != Inventory::ItemPtr {})
                 {
                         // we ask the user what they would like to do with this found item
                         do {
                                 pitem->print()
                                 cout << "==========================" << endl;
 
-                                std::printf("(%c) Remove Item\n", static_cast<char>(Option::RemoveItem));
-                                std::printf("(%c) Edit Item\n", static_cast<char>(Option::EditItem));
-                                std::printf("(%c) Quit\n", static_cast<char>(Option::Quit));
+                                std::printf("(%c) Remove Item\n", static_cast<char>(Options::Remove_Items));
+                                std::printf("(%c) Edit Item\n", static_cast<char>(Options::Edit_Items));
+                                std::printf("(%c) Quit\n", static_cast<char>(Options::Quit));
                                 const auto opt = get_user_action();
 
-                                if (opt == static_cast<char>(Option::RemoveItem))
+                                if (opt == static_cast<char>(Options::Remove_Items))
                                 {
                                         inventory.remove(pitem);
                                         break;
                                 }
-                                else if (opt == static_cast<char>(Option::EditItem))
+                                else if (opt == static_cast<char>(Options::Edit_Items))
                                 {
                                         /* NOTE(CA, 28.03.2022) - This is cumbersome to use and also inefficient. You should swap in-place or
                                         just edit a property of interest but that would be more complicated.*/
@@ -269,7 +276,7 @@ struct InventoryUI{
                         } while (true);
                 }
                 else { cout << "Item not found. Try adding an item " <<  endl;}
-}
+    }
 
         auto run()
         {
@@ -277,23 +284,24 @@ struct InventoryUI{
 
                 do {
                         list_options();
-                        const auto opt = get_user_action();
-                        if (opt == static_cast<char>(Options::AddItem))
+                        const auto opt = get_user_actions();
+                        if (opt == static_cast<char>(Options::Add_Items))
                         {
-                                const auto Items = handle_add_options();
+                                const auto item = handle_add_options();
                                 inventory.add(item);
-                                std::printf("Added item\n\n");
+                                cout << "Added item " << endl;
                         }
-                        else if (opt == static_cast<char>(Option::SearchItem)) { handle_search_options(); }
-                        else if (opt == static_cast<char>(Option::ListProducts)) { list_products(); }
-                        else if (opt == static_cast<char>(Option::ListItems)) { inventory.list(); }
-                        else if (opt == static_cast<char>(Option::Quit)) { break; }
-                        else { std::printf("Invalid option selected. Please try again.\n"); }
+                        else if (opt == static_cast<char>(Options::Search_Items)) { handle_search_options(); }
+                        else if (opt == static_cast<char>(Options::List_Products)) { list_products(); }
+                        else if (opt == static_cast<char>(Options::List_Items)) { inventory.list(); }
+                        else if (opt == static_cast<char>(Options::Quit)) { break; }
+                        else { printf("Invalid option selected. Please try again.\n"); }
                 } while (true);
         }
 };
 
 int main() {
     InventoryUI ui {};
+   
     ui.run();
 };
