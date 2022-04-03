@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <ios>
+#include <string>
 #include <vector>
 #include <iostream>
 #include <optional>
@@ -104,17 +105,18 @@ auto list_products()
 struct item
 {
     items     id;            // items category that item falls into
-    string name;          // Name of the item
+    string name;          // Name of the item 
     float       price;         // Price in GBP
     int         nstock;        // No. of units in stock
+    int   bbd; // best before date
 
         item() = default;
 
         item(const items prod, const std::string& name, const float price, const int nstock) :
-                id {prod}, name {name}, price {price}, nstock {nstock}
+                id {prod}, name {name}, price {price}, nstock {nstock}, bbd {bbd}
             {}
 
-        auto print() const { std::printf("%32s%64s%16.2f%8d\n", get_product_name(id).data(), name.c_str(), price, nstock); }
+        auto print() const { printf("%32s%64s%16.2f%8d\n", get_product_name(id).data(), name.c_str(), price, nstock); }
 };
 // Holds the inventory of all the stocked items in the store.
 struct Inventory
@@ -196,16 +198,17 @@ struct InventoryUI{
                 cout << "Select product category to add: ";
                 int pid {};
                 cin >> &Items.id;
-                if (!is_valid_product(Itemss.id)) { cout << "Invalid option selected. Please try again.\n"; }
+                if (!is_valid_product(Items.id)) { cout << "Invalid option selected. Please try again.\n"; }
                 else
                 {
-                // NOTE(CA, 28.03.2022) - Important to note that we need to consume the whitespaces from user input when using getline
                 cout << "Enter model name: ";
                 getline(cin >> ws, Items.name);
                 cout << "Enter price: ";
                 cin >> Items.price;
                 cout << "Enter quantity: ";
                 cin >> Items.nstock;
+                cout << " Best Before Date: ";
+                cin >> Items.bbd;
                 return Items;
                 }
 
