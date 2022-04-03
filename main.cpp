@@ -150,7 +150,7 @@ struct Inventory
         {
             printf("%32s%64s%16s%8s\n", "Product", "Model Name", "Price (GBP)", "Qty.");
             for_each(items.begin(), items.end(), [](const auto& item) { item.print(); });
-            cout << "====================" << endl;
+            cout << "========================" << endl;
         }
 };
 
@@ -258,7 +258,7 @@ struct InventoryUI{
                                 std::printf("(%c) Remove Item\n", static_cast<char>(Options::Remove_Items));
                                 std::printf("(%c) Edit Item\n", static_cast<char>(Options::Edit_Items));
                                 std::printf("(%c) Quit\n", static_cast<char>(Options::Quit));
-                                const auto opt = get_user_action();
+                                const auto opt = get_user_actions();
 
                                 if (opt == static_cast<char>(Options::Remove_Items))
                                 {
@@ -269,7 +269,7 @@ struct InventoryUI{
                                 {
                                         /* NOTE(CA, 28.03.2022) - This is cumbersome to use and also inefficient. You should swap in-place or
                                         just edit a property of interest but that would be more complicated.*/
-                                        const auto new_item = handle_add_option();
+                                        const auto new_item = handle_add_options();
                                         inventory.remove(pitem);
                                         inventory.add(new_item);
                                         break;
