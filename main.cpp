@@ -106,7 +106,7 @@ struct itemc
 {
     items       id;            // items category that item falls into
     string      name;          // Name of the item 
-    float       price;         // Price in GBP
+    float       price;         // Price in dollars
     int         nstock;        // No. of units in stock
     int         bbd;           // best before date
 
