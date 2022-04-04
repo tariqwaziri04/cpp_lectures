@@ -122,15 +122,15 @@ struct itemc
 struct Inventory
 {
         using SearchPredicate = function<bool(const itemc&)>;
-        using Items           = vector<itemc>;
-        using ItemPtr         = Items::iterator;        // pointer to item type
+        using Item           = vector<itemc>;
+        using ItemPtr         = Item::iterator;        // pointer to item type
 
-        Items items;
+        Item items;
 
         Inventory() { items.reserve(MAX_ITEMS); }
 
         // Add the given items to the inventory.
-        auto add(const Items& item) { items.emplace_back(item); }
+        auto add(const Item& item) { items.emplace_back(item); }
 
         // Deletes the given item from the inventory.
         auto remove(ItemPtr pitem) { items.erase(pitem); }
@@ -178,9 +178,8 @@ struct InventoryMS{
         cout << "(%c) List Product Categories" << endl, static_cast<char>(Options::List_Products);
         cout << "(%c) List Items in Stock" << endl, static_cast<char>(Options::List_Items);
         cout << "(%c) Quit" << endl, static_cast<char>(Options::Quit);
-    }
-        // get the user from the inventory management systems
-    auto get_user()
+    }      
+    auto get_user()  // get the user from the inventory management systems
     {
         char oprt {};
         cout << "Select operation: ";
@@ -227,22 +226,21 @@ struct InventoryMS{
 
         Inventory::ItemPtr pitem;
 
-            if (opt == 'n')
+            if (opt == 'n')                // search for item by name
             {
-                // search for item by name
                 string name {};
                 cout << "Enter Model Name: ";
                 getline(cin >> ws, name);
-                pitem = inventory.search([&](const item& item) { return item.name == name; });
+                pitem = inventory.search([&](const Items& item) { return item.name == name; });
             }
-            else if (opt == 'p')
+            else if (opt == 'p') // search for item by product id
                 {
-                    items prods {items::Invalid};
+                    items prod {items::Invalid};
                     list_products();
                     cout << "Select item id: ";
-                    cin >> &prods;
-                    cout << "Selected items category: ", get_product_name(prods).data();   
-                    pitem = inventory.search([&](const items& item) { return items.id == prods;});
+                    cin >> &prod;
+                    cout << "Selected items category: ", get_product_name(prod).data();   
+                    pitem = inventory.search([&](const items& item) { return items.id == prod;});
                 }
             else
                 {
@@ -279,7 +277,7 @@ struct InventoryMS{
                                 else { cout << "Invalid option selected. Please try again " << endl;}
                         } while (true);
                 }
-                else { cout << "Item not found. Try adding an item " <<  endl;}
+                else { cout << "Item not found. Try adding an item " << endl;}
     }
 
         auto run()
